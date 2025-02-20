@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 # __dir__ (double underscores) in Ruby is a special method that returns the absolute path of the directory where the current file is located. # rubocop:disable Layout/LineLength
-file_path = File.expand_path('../student_unit_offering_file_20-02-2025_01-39-50.txt', __dir__)
-# file_content = File.read(file_path)
+file_name = 'student_unit_offering_file_20-02-2025_01-39-50.txt'
+file_path = File.expand_path("../#{file_name}", __dir__)
 
 file_size = (File.size(file_path) / 1_000_000)
 
@@ -23,36 +23,28 @@ chunk_size = line_count / chunk_num
 puts "Chunk Size: #{chunk_size}"
 
 n = 1
-start_index = 0
-chunk_test = 10
+chunk_start = 0
 
-# chunk_num.times do
-2.times do
+chunk_num.times do
   output_folder = '../output'
-  output_file = "../output/chunk_#{n}.txt"
+  output_file = "../output/student_unit_offering_file_20-02-2025_01-39-50_#{n}.txt"
 
   Dir.mkdir(output_folder) unless Dir.exist?(output_folder)
-
   # w - write mode
   # File in Ruby is a built-in class used for handling files. It provides methods to read, write, create, delete, and manipulate files. # rubocop:disable Layout/LineLength
   File.open(output_file, 'w') do |out|
-    File.foreach(file_path).with_index(start_index) do |line, index|
-      start_index += 1
+    File.foreach(file_path).with_index do |line, index|
+      next if index < chunk_start # keeps cycling through until index is equal to chunk_start
 
-      next if start_index >= chunk_test
+      out.puts line # writes each line from input file to the output file from chunk_start
 
-      puts "Line ##{start_index}: #{line}"
-
-      # start_index += 1
-      # out.puts line
+      break if index >= chunk_start + chunk_size - 1 # Stop after chunk_size lines
     end
   end
 
-  # puts "First #{chunk_size} lines have been written to #{output_file}"
-  # n += 1
-  start_index = 10
-  chunk_test += chunk_test
-  # chunk_size += chunk_size
+  puts "Set of #{chunk_size} lines have been written to #{output_file}"
+  n += 1
+  chunk_start += chunk_size # Updates starting index to after previous chunk
 end
 
 # 164667 19943884	 20751481	2020	4780	  1	Y	COMPLETED	INACTIVE	C
